@@ -5,6 +5,9 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faAngleDown,
   faCircleCheck,
+  faCircleExclamation,
+  faCircleInfo,
+  faCircleXmark,
   faCopy,
   faDownload,
   faEnvelope,
@@ -32,6 +35,9 @@ import router from '@/router'
 library.add(
   faAngleDown,
   faCircleCheck,
+  faCircleExclamation,
+  faCircleInfo,
+  faCircleXmark,
   faCopy,
   faDownload,
   faEnvelope,

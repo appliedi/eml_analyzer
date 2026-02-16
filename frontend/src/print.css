@@ -42,9 +42,13 @@
   .text-success,
   .text-error,
   .text-warning,
+  .text-info,
+  .text-orange-500,
   .border-success,
   .border-error,
-  .border-warning {
+  .border-warning,
+  .border-info,
+  .border-orange-500 {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }

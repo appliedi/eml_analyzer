@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, type PropType } from 'vue'
+import { type PropType,toRef } from 'vue'
 
+import { useVerdictScoring } from '@/composables/useVerdictScoring'
 import type { VerdictType } from '@/schemas'
 
 const props = defineProps({
@@ -10,50 +11,8 @@ const props = defineProps({
   }
 })
 
-const maliciousCount = computed(() => props.verdicts.filter((v) => v.malicious).length)
-const totalCount = computed(() => props.verdicts.length)
-const safeCount = computed(() => totalCount.value - maliciousCount.value)
-const safetyPercentage = computed(() => {
-  if (totalCount.value === 0) return 100
-  return Math.round((safeCount.value / totalCount.value) * 100)
-})
-
-const riskLevel = computed(() => {
-  if (totalCount.value === 0) return 'unknown'
-  if (maliciousCount.value === 0) return 'clean'
-  if (maliciousCount.value >= totalCount.value / 2) return 'malicious'
-  return 'suspicious'
-})
-
-const riskLabel = computed(() => {
-  const labels: Record<string, string> = {
-    unknown: 'No Verdicts',
-    clean: 'Clean',
-    suspicious: 'Suspicious',
-    malicious: 'Malicious'
-  }
-  return labels[riskLevel.value]
-})
-
-const riskColor = computed(() => {
-  const colors: Record<string, string> = {
-    unknown: 'text-base-content',
-    clean: 'text-success',
-    suspicious: 'text-warning',
-    malicious: 'text-error'
-  }
-  return colors[riskLevel.value]
-})
-
-const borderColor = computed(() => {
-  const colors: Record<string, string> = {
-    unknown: 'border-base-300',
-    clean: 'border-success',
-    suspicious: 'border-warning',
-    malicious: 'border-error'
-  }
-  return colors[riskLevel.value]
-})
+const { safetyPercentage, safeCount, totalCount, riskLabel, riskColor, borderColor, riskIcon } =
+  useVerdictScoring(toRef(props, 'verdicts'))
 </script>
 
 <template>
@@ -68,7 +27,10 @@ const borderColor = computed(() => {
         <span class="text-2xl font-bold">{{ safetyPercentage }}%</span>
       </div>
       <div>
-        <h2 class="text-2xl font-bold" :class="riskColor">{{ riskLabel }}</h2>
+        <h2 class="text-2xl font-bold flex items-center gap-2" :class="riskColor">
+          <font-awesome-icon v-if="riskIcon" :icon="riskIcon" class="w-6 h-6" />
+          {{ riskLabel }}
+        </h2>
         <p class="text-base-content/60" v-if="totalCount > 0">
           {{ safeCount }}/{{ totalCount }} services report clean
         </p>

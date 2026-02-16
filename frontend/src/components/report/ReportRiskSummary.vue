@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, type PropType } from 'vue'
+import { computed, type PropType,toRef } from 'vue'
 
+import { useVerdictScoring, verdictStyle } from '@/composables/useVerdictScoring'
 import type { ResponseType } from '@/schemas'
 
 const props = defineProps({
@@ -10,40 +11,8 @@ const props = defineProps({
   }
 })
 
-const maliciousCount = computed(() => props.response.verdicts.filter((v) => v.malicious).length)
-const totalCount = computed(() => props.response.verdicts.length)
-const safeCount = computed(() => totalCount.value - maliciousCount.value)
-const safetyPercentage = computed(() => {
-  if (totalCount.value === 0) return 100
-  return Math.round((safeCount.value / totalCount.value) * 100)
-})
-
-const riskLevel = computed(() => {
-  if (totalCount.value === 0) return 'unknown'
-  if (maliciousCount.value === 0) return 'clean'
-  if (maliciousCount.value >= totalCount.value / 2) return 'malicious'
-  return 'suspicious'
-})
-
-const riskLabel = computed(() => {
-  const labels: Record<string, string> = {
-    unknown: 'No Verdicts',
-    clean: 'Clean',
-    suspicious: 'Suspicious',
-    malicious: 'Malicious'
-  }
-  return labels[riskLevel.value]
-})
-
-const riskColor = computed(() => {
-  const colors: Record<string, string> = {
-    unknown: 'text-base-content',
-    clean: 'text-success',
-    suspicious: 'text-warning',
-    malicious: 'text-error'
-  }
-  return colors[riskLevel.value]
-})
+const { safetyPercentage, safeCount, totalCount, riskLabel, riskColor, riskIcon } =
+  useVerdictScoring(toRef(() => props.response.verdicts))
 
 const urlCount = computed(() => {
   const urls = new Set<string>()
@@ -77,7 +46,10 @@ const hopCount = computed(() => props.response.eml.header.received?.length ?? 0)
   <div>
     <div class="mb-4">
       <span class="text-3xl font-bold" :class="riskColor">{{ safetyPercentage }}%</span>
-      <span class="text-2xl font-bold ml-2" :class="riskColor">&mdash; {{ riskLabel }}</span>
+      <span class="text-2xl font-bold ml-2" :class="riskColor">
+        <font-awesome-icon v-if="riskIcon" :icon="riskIcon" class="w-5 h-5" />
+        &mdash; {{ riskLabel }}
+      </span>
       <p class="text-base-content/60 mt-1" v-if="totalCount > 0">
         {{ safeCount }}/{{ totalCount }} services report clean
       </p>
@@ -110,12 +82,9 @@ const hopCount = computed(() => props.response.eml.header.received?.length ?? 0)
         v-for="verdict in response.verdicts"
         :key="verdict.name"
         class="inline-flex items-center gap-1 rounded border px-2 py-1 text-sm"
-        :class="verdict.malicious ? 'border-error text-error' : 'border-success text-success'"
+        :class="[verdictStyle(verdict).border, verdictStyle(verdict).color]"
       >
-        <font-awesome-icon
-          :icon="verdict.malicious ? 'triangle-exclamation' : 'circle-check'"
-          class="w-3 h-3"
-        />
+        <font-awesome-icon :icon="verdictStyle(verdict).icon" class="w-3 h-3" />
         {{ verdict.name }}
         <span class="font-medium ml-1">{{
           verdict.score != null ? verdict.score.toFixed(2) : 'N/A'

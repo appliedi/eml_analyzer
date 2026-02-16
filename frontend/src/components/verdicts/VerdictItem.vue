@@ -2,6 +2,7 @@
 import { computed, type PropType } from 'vue'
 
 import Detail from '@/components/verdicts/DetailItem.vue'
+import { verdictStyle } from '@/composables/useVerdictScoring'
 import type { DetailType, VerdictType } from '@/schemas'
 
 const props = defineProps({
@@ -19,9 +20,7 @@ const score = computed(() => {
   return props.verdict.score ? props.verdict.score.toFixed(2) : 'N/A'
 })
 
-const cardType = computed(() => {
-  return props.verdict.malicious ? 'border-warning' : 'border-success'
-})
+const style = computed(() => verdictStyle(props.verdict))
 
 const details = computed((): DetailType[] => {
   if (props.verdict.details.length > 0) {
@@ -32,14 +31,10 @@ const details = computed((): DetailType[] => {
 </script>
 
 <template>
-  <div class="card border-1" :class="cardType">
+  <div class="card border-1" :class="style.border">
     <div class="card-body">
       <h3 class="card-title text-base">
-        <font-awesome-icon
-          :icon="verdict.malicious ? 'triangle-exclamation' : 'circle-check'"
-          class="w-4 h-4"
-          :class="verdict.malicious ? 'text-warning' : 'text-success'"
-        />
+        <font-awesome-icon :icon="style.icon" class="w-4 h-4" :class="style.color" />
         {{ title }}
         <div v-if="verdict.score != null" class="badge">{{ score }}</div>
       </h3>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { type PropType } from 'vue'
 
+import { verdictStyle } from '@/composables/useVerdictScoring'
 import type { VerdictType } from '@/schemas'
 
 defineProps({
@@ -17,13 +18,13 @@ defineProps({
       v-for="verdict in verdicts"
       :key="verdict.name"
       class="report-verdict-card border-l-4 rounded p-4"
-      :class="verdict.malicious ? 'border-warning' : 'border-success'"
+      :class="verdictStyle(verdict).border"
     >
       <h3 class="font-bold text-base flex items-center gap-2">
         <font-awesome-icon
-          :icon="verdict.malicious ? 'triangle-exclamation' : 'circle-check'"
+          :icon="verdictStyle(verdict).icon"
           class="w-4 h-4"
-          :class="verdict.malicious ? 'text-warning' : 'text-success'"
+          :class="verdictStyle(verdict).color"
         />
         {{ verdict.name }}
         <span v-if="verdict.score != null" class="font-normal text-sm">
