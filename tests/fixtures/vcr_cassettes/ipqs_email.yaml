@@ -1,0 +1,26 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - ipqualityscore.com
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://ipqualityscore.com/api/json/email//test@example.com
+  response:
+    body:
+      string: '{"success":true,"valid":true,"disposable":false,"smtp_score":3,"overall_score":4,"first_name":"Unknown","common":false,"generic":false,"dns_valid":true,"honeypot":false,"deliverability":"high","frequent_complainer":false,"spam_trap_score":"none","catch_all":false,"timed_out":false,"suspect":false,"recent_abuse":false,"fraud_score":10,"suggested_domain":"N/A","leaked":false,"sanitized_email":"test@example.com","request_id":"ghi789"}'
+    headers:
+      Content-Type:
+      - application/json
+    status:
+      code: 200
+      message: OK
+version: 1

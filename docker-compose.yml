@@ -20,11 +20,16 @@ services:
       context: ./
       dockerfile: app.Dockerfile
     ports:
-      - ${PORT:-8000}:8000
+      - ${PORT:-8050}:8050
     environment:
+      - PORT=8050
       - SPAMASSASSIN_HOST=spamassassin
       - SPAMASSASSIN_PORT=${SPAMASSASSIN_PORT:-783}
       - REDIS_URL=redis://redis:${REDIS_PORT:-6379}
+      - VIRUSTOTAL_API_KEY=${VIRUSTOTAL_API_KEY}
+      - URLSCAN_API_KEY=${URLSCAN_API_KEY}
+      - EMAIL_REP_API_KEY=${EMAIL_REP_API_KEY}
+      - IPQUALITYSCORE_API_KEY=${IPQUALITYSCORE_API_KEY}
     restart: always
     depends_on:
       - spamassassin

@@ -1,14 +1,12 @@
 import sys
+from pathlib import Path
 
 from starlette.config import Config
 from starlette.datastructures import Secret
 
 from .datastructures import DatabaseURL
 
-try:
-    config = Config(".env")
-except Exception:
-    config = Config()
+config = Config(".env") if Path(".env").is_file() else Config()
 
 PROJECT_NAME: str = config("PROJECT_NAME", default="eml_analyzer")
 
@@ -39,6 +37,9 @@ VIRUSTOTAL_API_KEY: Secret | None = config(
 URLSCAN_API_KEY: Secret | None = config("URLSCAN_API_KEY", cast=Secret, default=None)
 EMAIL_REP_API_KEY: Secret | None = config(
     "EMAIL_REP_API_KEY", cast=Secret, default=None
+)
+IPQUALITYSCORE_API_KEY: Secret | None = config(
+    "IPQUALITYSCORE_API_KEY", cast=Secret, default=None
 )
 
 # Async/aiometer

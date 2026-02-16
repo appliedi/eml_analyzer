@@ -14,3 +14,7 @@ class Status(APIModel):
     email_rep: bool = Field(
         default=False, description="Whether EmailRep integration is enabled or not"
     )
+    ipqs: bool = Field(
+        default=False,
+        description="Whether IPQualityScore integration is enabled or not",
+    )

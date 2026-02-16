@@ -22,3 +22,18 @@ class Response(APIModel):
     @cached_property
     def sha256s(self) -> set[str]:
         return {attachment.hash.sha256 for attachment in self.eml.attachments}
+
+    @cached_property
+    def ip_addresses(self) -> set[str]:
+        ips: set[str] = set()
+        if self.eml.header.received_ip:
+            ips.update(self.eml.header.received_ip)
+        for body in self.eml.bodies:
+            ips.update(body.ip_addresses)
+        return ips
+
+    @cached_property
+    def domains(self) -> set[str]:
+        return set(
+            itertools.chain.from_iterable([body.domains for body in self.eml.bodies])
+        )

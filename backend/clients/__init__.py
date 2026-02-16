@@ -1,6 +1,7 @@
 import vt
 
 from .emailrep import EmailRep  # noqa: F401
+from .ipqs import IPQualityScore  # noqa: F401
 from .spamassasin import SpamAssassin  # noqa: F401
 from .urlscan import UrlScan  # noqa: F401
 

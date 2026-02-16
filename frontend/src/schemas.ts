@@ -13,7 +13,8 @@ export const StatusSchema = z.object({
   cache: z.boolean().optional(),
   vt: z.boolean().optional(),
   emailRep: z.boolean().optional(),
-  urlscan: z.boolean().optional()
+  urlscan: z.boolean().optional(),
+  ipqs: z.boolean().optional()
 })
 
 export type StatusType = z.infer<typeof StatusSchema>

@@ -22,9 +22,7 @@ def create_app():
 
     app.add_middleware(
         ContentSecurityPolicy,
-        Option={
-            "img-src": ["'self'", "data:", "t0.gstatic.com", "www.google.com"]
-        },
+        Option={"img-src": ["'self'", "data:", "t0.gstatic.com", "www.google.com"]},
         script_nonce=False,
         style_nonce=False,
         report_only=False,

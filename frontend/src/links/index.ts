@@ -5,6 +5,12 @@ import { Browserling } from './browserling'
 import { Crtsh } from './crtsh'
 import { EmailRep } from './emailrep'
 import { HybridAnalysis } from './hybridanalysis'
+import {
+  IPQualityScoreForDomain,
+  IPQualityScoreForEmail,
+  IPQualityScoreForIP,
+  IPQualityScoreForURL
+} from './ipqualityscore'
 import { SecurityTrails } from './securitytrails'
 import { Shodan } from './shodan'
 import { UrlscanForDomain, UrlscanForIP, UrlscanForURL } from './urlscan'
@@ -21,6 +27,10 @@ export const Links: LinkType[] = [
   new Crtsh(),
   new EmailRep(),
   new HybridAnalysis(),
+  new IPQualityScoreForDomain(),
+  new IPQualityScoreForEmail(),
+  new IPQualityScoreForIP(),
+  new IPQualityScoreForURL(),
   new SecurityTrails(),
   new Shodan(),
   new UrlscanForDomain(),

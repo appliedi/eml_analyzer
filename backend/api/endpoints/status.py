@@ -11,10 +11,12 @@ async def get_status(
     optional_email_rep: dependencies.OptionalEmailRep,
     optional_vt: dependencies.OptionalVirusTotal,
     optional_urlscan: dependencies.OptionalUrlScan,
+    optional_ipqs: dependencies.OptionalIPQualityScore,
 ) -> schemas.Status:
     return schemas.Status(
         cache=optional_redis is not None,
         vt=optional_vt is not None,
         email_rep=optional_email_rep is not None,
         urlscan=optional_urlscan is not None,
+        ipqs=optional_ipqs is not None,
     )

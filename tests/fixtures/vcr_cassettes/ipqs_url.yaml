@@ -1,0 +1,27 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - ipqualityscore.com
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://ipqualityscore.com/api/json/url//http%3A%2F%2Fexample.com?strictness=0
+  response:
+    body:
+      string: '{"success":true,"unsafe":false,"domain":"example.com","ip_address":"93.184.216.34","country_code":"US","category":"search
+        engines","risk_score":0,"status_code":200,"page_size":1256,"content_type":"text/html","server":"ECS","domain_rank":1,"dns_valid":true,"parking":false,"spamming":false,"malware":false,"phishing":false,"suspicious":false,"adult":false,"request_id":"def456"}'
+    headers:
+      Content-Type:
+      - application/json
+    status:
+      code: 200
+      message: OK
+version: 1

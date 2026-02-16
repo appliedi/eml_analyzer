@@ -12,6 +12,7 @@ from backend.factories.dkim_ import DKIMVerdictFactory
 from .abstract import AbstractAsyncFactory
 from .emailrep import EmailRepVerdictFactory
 from .eml import EmlFactory
+from .ipqs import IPQSEmailVerdictFactory, IPQSIPVerdictFactory, IPQSURLVerdictFactory
 from .oldid import OleIDVerdictFactory
 from .spamassassin import SpamAssassinVerdictFactory
 from .urlscan import UrlScanVerdictFactory
@@ -92,6 +93,39 @@ async def get_dkim_verdict(eml_file: bytes, eml: schemas.Eml) -> schemas.Verdict
     return None
 
 
+async def get_ipqs_ip_verdict(
+    ips: types.ListSet[str], *, client: clients.IPQualityScore
+) -> schemas.Verdict | None:
+    try:
+        return await IPQSIPVerdictFactory(client).call(ips)
+    except Exception as e:
+        log_exception(e)
+
+    return None
+
+
+async def get_ipqs_url_verdict(
+    urls: types.ListSet[str], *, client: clients.IPQualityScore
+) -> schemas.Verdict | None:
+    try:
+        return await IPQSURLVerdictFactory(client).call(urls)
+    except Exception as e:
+        log_exception(e)
+
+    return None
+
+
+async def get_ipqs_email_verdict(
+    email: str, *, client: clients.IPQualityScore
+) -> schemas.Verdict | None:
+    try:
+        return await IPQSEmailVerdictFactory(client).call(email)
+    except Exception as e:
+        log_exception(e)
+
+    return None
+
+
 async def set_verdicts(
     response: schemas.Response,
     *,
@@ -100,6 +134,7 @@ async def set_verdicts(
     optional_email_rep: clients.EmailRep | None = None,
     optional_vt: clients.VirusTotal | None = None,
     optional_urlscan: clients.UrlScan | None = None,
+    optional_ipqs: clients.IPQualityScore | None = None,
 ) -> schemas.Response:
     tasks: list[partial[Coroutine[Any, Any, schemas.Verdict | None]]] = [
         partial(get_spam_assassin_verdict, eml_file, client=spam_assassin),
@@ -124,6 +159,27 @@ async def set_verdicts(
             partial(get_urlscan_verdict, response.urls, client=optional_urlscan)
         )
 
+    if optional_ipqs:
+        if response.ip_addresses:
+            tasks.append(
+                partial(
+                    get_ipqs_ip_verdict, response.ip_addresses, client=optional_ipqs
+                )
+            )
+        combined_urls = response.urls | response.domains
+        if combined_urls:
+            tasks.append(
+                partial(get_ipqs_url_verdict, combined_urls, client=optional_ipqs)
+            )
+        if response.eml.header.from_ is not None:
+            tasks.append(
+                partial(
+                    get_ipqs_email_verdict,
+                    response.eml.header.from_,
+                    client=optional_ipqs,
+                )
+            )
+
     results = await aiometer.run_all(tasks)
     response.verdicts = [result for result in results if result]
     return response
@@ -139,6 +195,7 @@ class ResponseFactory(AbstractAsyncFactory):
         optional_email_rep: clients.EmailRep | None,
         optional_vt: clients.VirusTotal | None = None,
         optional_urlscan: clients.UrlScan | None = None,
+        optional_ipqs: clients.IPQualityScore | None = None,
     ) -> schemas.Response:
         parsed = parse(eml_file)
         return await set_verdicts(
@@ -148,4 +205,5 @@ class ResponseFactory(AbstractAsyncFactory):
             optional_email_rep=optional_email_rep,
             optional_vt=optional_vt,
             optional_urlscan=optional_urlscan,
+            optional_ipqs=optional_ipqs,
         )

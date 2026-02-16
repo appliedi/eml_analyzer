@@ -16,6 +16,7 @@ async def _analyze(
     optional_email_rep: clients.EmailRep | None = None,
     optional_vt: clients.VirusTotal | None = None,
     optional_urlscan: clients.UrlScan | None = None,
+    optional_ipqs: clients.IPQualityScore | None = None,
 ) -> schemas.Response:
     try:
         payload = schemas.FilePayload(file=file)
@@ -31,6 +32,7 @@ async def _analyze(
         spam_assassin=spam_assassin,
         optional_urlscan=optional_urlscan,
         optional_vt=optional_vt,
+        optional_ipqs=optional_ipqs,
     )
 
 
@@ -59,6 +61,7 @@ async def analyze(
     optional_email_rep: dependencies.OptionalEmailRep,
     optional_vt: dependencies.OptionalVirusTotal,
     optional_urlscan: dependencies.OptionalUrlScan,
+    optional_ipqs: dependencies.OptionalIPQualityScore,
 ) -> schemas.Response:
     response = await _analyze(
         payload.file.encode(),
@@ -66,6 +69,7 @@ async def analyze(
         optional_email_rep=optional_email_rep,
         optional_urlscan=optional_urlscan,
         optional_vt=optional_vt,
+        optional_ipqs=optional_ipqs,
     )
 
     if optional_redis is not None:
@@ -91,6 +95,7 @@ async def analyze_file(
     optional_email_rep: dependencies.OptionalEmailRep,
     optional_vt: dependencies.OptionalVirusTotal,
     optional_urlscan: dependencies.OptionalUrlScan,
+    optional_ipqs: dependencies.OptionalIPQualityScore,
 ) -> schemas.Response:
     response = await _analyze(
         file,
@@ -98,6 +103,7 @@ async def analyze_file(
         spam_assassin=spam_assassin,
         optional_urlscan=optional_urlscan,
         optional_vt=optional_vt,
+        optional_ipqs=optional_ipqs,
     )
 
     if optional_redis is not None:

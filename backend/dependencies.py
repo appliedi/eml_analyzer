@@ -43,6 +43,16 @@ async def get_optional_email_rep():
         yield None
 
 
+async def get_optional_ipqs():
+    if settings.IPQUALITYSCORE_API_KEY:
+        async with clients.IPQualityScore(
+            api_key=settings.IPQUALITYSCORE_API_KEY
+        ) as client:
+            yield client
+    else:
+        yield None
+
+
 def get_spam_assassin() -> clients.SpamAssassin:
     return clients.SpamAssassin(
         host=settings.SPAMASSASSIN_HOST,
@@ -59,4 +69,7 @@ OptionalUrlScan = typing.Annotated[
     clients.UrlScan | None, Depends(get_optional_urlscan)
 ]
 OptionalEmailRep = typing.Annotated[clients.EmailRep, Depends(get_optional_email_rep)]
+OptionalIPQualityScore = typing.Annotated[
+    clients.IPQualityScore | None, Depends(get_optional_ipqs)
+]
 SpamAssassin = typing.Annotated[clients.SpamAssassin, Depends(get_spam_assassin)]

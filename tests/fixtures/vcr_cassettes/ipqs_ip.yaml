@@ -1,0 +1,27 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - ipqualityscore.com
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://ipqualityscore.com/api/json/ip//1.2.3.4?strictness=1
+  response:
+    body:
+      string: '{"success":true,"message":"Success","fraud_score":30,"country_code":"US","region":"California","city":"Los
+        Angeles","ISP":"Example ISP","ASN":12345,"organization":"Example Org","is_crawler":false,"timezone":"America/Los_Angeles","mobile":false,"host":"example.com","proxy":false,"vpn":false,"tor":false,"active_vpn":false,"active_tor":false,"recent_abuse":false,"bot_status":false,"request_id":"abc123"}'
+    headers:
+      Content-Type:
+      - application/json
+    status:
+      code: 200
+      message: OK
+version: 1
