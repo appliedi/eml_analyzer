@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { computed, type PropType } from 'vue'
+import { computed, type PropType, toRef } from 'vue'
 
 import Attachments from '@/components/attachments/AttachmentsItem.vue'
 import Bodies from '@/components/bodies/BodiesItem.vue'
 import CollapsibleSection from '@/components/CollapsibleSection.vue'
 import EmailSummaryCard from '@/components/EmailSummaryCard.vue'
 import Headers from '@/components/headers/HeadersItem.vue'
+import IOCTableSection from '@/components/ioc-table/IOCTableSection.vue'
 import ScorecardSection from '@/components/scorecard/ScorecardSection.vue'
 import SectionNav from '@/components/SectionNav.vue'
 import Verdicts from '@/components/verdicts/VerdictsItem.vue'
+import { useIOCTable } from '@/composables/useIOCTable'
 import { useStatus } from '@/composables/useStatus'
 import type { ResponseType } from '@/schemas'
 
@@ -23,6 +25,13 @@ const { status } = useStatus()
 
 const hasMalicious = computed(() => props.response.verdicts.some((v) => v.malicious))
 
+const {
+  totalCount: iocCount,
+  maliciousCount: iocMaliciousCount,
+  columns: iocColumns
+} = useIOCTable(toRef(props, 'response'), status)
+const showIOCTable = computed(() => iocCount.value > 0 && iocColumns.value.length > 0)
+
 const sections = computed(() => {
   const s: { id: string; label: string; icon: string; count?: number }[] = []
   if (props.response.verdicts.length > 0) {
@@ -31,6 +40,14 @@ const sections = computed(() => {
       label: 'Verdicts',
       icon: 'shield-halved',
       count: props.response.verdicts.length
+    })
+  }
+  if (showIOCTable.value) {
+    s.push({
+      id: 'section-ioc-table',
+      label: 'IOC Table',
+      icon: 'globe',
+      count: iocCount.value
     })
   }
   s.push({ id: 'section-headers', label: 'Headers', icon: 'envelope' })
@@ -86,6 +103,17 @@ const sections = computed(() => {
       :count="response.verdicts.length"
     >
       <Verdicts :verdicts="response.verdicts" />
+    </CollapsibleSection>
+
+    <CollapsibleSection
+      v-if="showIOCTable"
+      id="section-ioc-table"
+      title="IOC Cross-Reference"
+      icon="globe"
+      :default-open="iocMaliciousCount > 0"
+      :count="iocCount"
+    >
+      <IOCTableSection :response="response" />
     </CollapsibleSection>
 
     <CollapsibleSection id="section-headers" title="Headers" icon="envelope" :default-open="false">

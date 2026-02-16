@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import { type PropType } from 'vue'
+import { computed, type PropType, toRef } from 'vue'
 
 import ReportAttachments from '@/components/report/ReportAttachments.vue'
 import ReportBodies from '@/components/report/ReportBodies.vue'
 import ReportEmailSummary from '@/components/report/ReportEmailSummary.vue'
 import ReportHeaders from '@/components/report/ReportHeaders.vue'
+import ReportIOCTable from '@/components/report/ReportIOCTable.vue'
 import ReportRiskSummary from '@/components/report/ReportRiskSummary.vue'
 import ReportVerdicts from '@/components/report/ReportVerdicts.vue'
+import { useIOCTable } from '@/composables/useIOCTable'
+import { useStatus } from '@/composables/useStatus'
 import type { ResponseType } from '@/schemas'
 
 dayjs.extend(utc)
@@ -19,6 +22,10 @@ const props = defineProps({
     required: true
   }
 })
+
+const { status } = useStatus()
+const { rows: iocRows, columns: iocColumns } = useIOCTable(toRef(props, 'response'), status)
+const showIOCTable = computed(() => iocRows.value.length > 0 && iocColumns.value.length > 0)
 
 const generatedAt = dayjs.utc().format()
 
@@ -60,6 +67,11 @@ const handlePrint = () => {
     <section class="report-section mt-8" v-if="props.response.verdicts.length > 0">
       <h2 class="text-2xl font-bold mb-4">Verdicts</h2>
       <ReportVerdicts :verdicts="props.response.verdicts" />
+    </section>
+
+    <section class="report-section mt-8" v-if="showIOCTable">
+      <h2 class="text-2xl font-bold mb-4">IOC Cross-Reference</h2>
+      <ReportIOCTable :response="props.response" />
     </section>
 
     <section class="report-section mt-8">

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, type PropType,toRef } from 'vue'
+import { computed, type PropType, toRef } from 'vue'
 
 import { useVerdictScoring, verdictStyle } from '@/composables/useVerdictScoring'
 import type { ResponseType } from '@/schemas'
