@@ -77,6 +77,14 @@
     overflow: visible !important;
   }
 
+  /* Expand collapsed <details> and hide toggle in print */
+  details > *:not(summary) {
+    display: block !important;
+  }
+  details > summary {
+    display: none !important;
+  }
+
   /* Remove shadows */
   .shadow,
   .shadow-md,

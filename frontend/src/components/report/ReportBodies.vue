@@ -17,9 +17,14 @@ defineProps({
       <h3 class="text-lg font-bold mb-2">
         Body {{ index + 1 }}: {{ body.contentType || 'unknown' }}
       </h3>
-      <pre class="whitespace-pre-wrap break-all bg-base-200 p-4 rounded text-sm">{{
-        body.content
-      }}</pre>
+      <details class="mt-1 mb-2">
+        <summary class="cursor-pointer text-sm font-medium text-base-content/70">
+          Show body content
+        </summary>
+        <pre class="whitespace-pre-wrap break-all bg-base-200 p-4 rounded text-sm mt-2">{{
+          body.content
+        }}</pre>
+      </details>
 
       <table class="table w-full break-all mt-2" v-if="body.urls.length > 0">
         <thead>
