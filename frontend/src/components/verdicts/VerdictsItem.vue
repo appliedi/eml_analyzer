@@ -14,7 +14,6 @@ defineProps({
 
 <template>
   <div class="grid gap-4">
-    <h2 class="text-2xl font-bold middle">Verdicts</h2>
     <Verdict
       class="grid gap-4"
       v-for="verdict in verdicts"

@@ -14,6 +14,7 @@ dependencies = [
   "beautifulsoup4>=4.14.3",
   "circus>=0.19.0",
   "compoundfiles>=0.3,<0.4",
+  "confusable-homoglyphs>=3.3.0",
   "compressed-rtf>=1.0.7",
   "convert-outlook-msg-file",
   "dateparser>=1.2.2",

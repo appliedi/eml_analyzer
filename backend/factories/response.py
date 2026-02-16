@@ -10,11 +10,14 @@ from backend import clients, schemas, types
 from backend.factories.dkim_ import DKIMVerdictFactory
 
 from .abstract import AbstractAsyncFactory
+from .email_auth import EmailAuthVerdictFactory
 from .emailrep import EmailRepVerdictFactory
 from .eml import EmlFactory
+from .homoglyph import HomoglyphVerdictFactory
 from .ipqs import IPQSEmailVerdictFactory, IPQSIPVerdictFactory, IPQSURLVerdictFactory
 from .oldid import OleIDVerdictFactory
 from .spamassassin import SpamAssassinVerdictFactory
+from .url_unshorten import URLUnshortenVerdictFactory
 from .urlscan import UrlScanVerdictFactory
 from .virustotal import VirusTotalVerdictFactory
 
@@ -93,6 +96,37 @@ async def get_dkim_verdict(eml_file: bytes, eml: schemas.Eml) -> schemas.Verdict
     return None
 
 
+async def get_email_auth_verdict(eml: schemas.Eml) -> schemas.Verdict | None:
+    try:
+        return await EmailAuthVerdictFactory().call(eml)
+    except Exception as e:
+        log_exception(e)
+
+    return None
+
+
+async def get_url_unshorten_verdict(
+    urls: types.ListSet[str],
+) -> schemas.Verdict | None:
+    try:
+        return await URLUnshortenVerdictFactory().call(urls)
+    except Exception as e:
+        log_exception(e)
+
+    return None
+
+
+async def get_homoglyph_verdict(
+    domains: types.ListSet[str], from_: str | None
+) -> schemas.Verdict | None:
+    try:
+        return await HomoglyphVerdictFactory().call(domains, from_)
+    except Exception as e:
+        log_exception(e)
+
+    return None
+
+
 async def get_ipqs_ip_verdict(
     ips: types.ListSet[str], *, client: clients.IPQualityScore
 ) -> schemas.Verdict | None:
@@ -140,7 +174,12 @@ async def set_verdicts(
         partial(get_spam_assassin_verdict, eml_file, client=spam_assassin),
         partial(get_oleid_verdict, response.eml.attachments),
         partial(get_dkim_verdict, eml_file=eml_file, eml=response.eml),
+        partial(get_email_auth_verdict, response.eml),
+        partial(get_homoglyph_verdict, response.domains, response.eml.header.from_),
     ]
+
+    if response.urls:
+        tasks.append(partial(get_url_unshorten_verdict, response.urls))
 
     if response.eml.header.from_ is not None and optional_email_rep is not None:
         tasks.append(

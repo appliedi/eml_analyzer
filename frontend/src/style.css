@@ -6,3 +6,17 @@
     light --default,
     dark --prefersdark;
 }
+
+[id^='section-'] {
+  scroll-margin-top: 4rem;
+}
+
+/* DaisyUI collapse uses overflow:hidden on both the wrapper and content,
+   which clips absolutely-positioned dropdown menus. Override both when open. */
+.collapse:has(> input:checked) {
+  overflow: visible;
+}
+
+.collapse > input:checked ~ .collapse-content {
+  overflow: visible;
+}

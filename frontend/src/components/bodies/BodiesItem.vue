@@ -46,7 +46,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <h2 class="text-2xl font-bold middle">Bodies</h2>
   <div role="tablist" class="tabs tabs-border justify-center">
     <a
       role="tab"

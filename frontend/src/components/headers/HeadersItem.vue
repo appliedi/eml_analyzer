@@ -17,10 +17,11 @@ defineProps({
 </script>
 
 <template>
-  <h2 class="text-2xl font-bold middle">Headers</h2>
-  <Hops :header="header" />
-  <BasicHeaders :header="header" />
-  <SecurityHeaders :header="header" />
-  <XHeaders :header="header" />
-  <OtherHeaders :header="header" />
+  <div class="grid gap-4">
+    <Hops :header="header" />
+    <BasicHeaders :header="header" />
+    <SecurityHeaders :header="header" />
+    <XHeaders :header="header" />
+    <OtherHeaders :header="header" />
+  </div>
 </template>

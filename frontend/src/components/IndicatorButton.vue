@@ -34,7 +34,7 @@ const copyToClipboard = () => {
       <span>{{ truncate(value, 64) }}</span>
       <font-awesome-icon icon="angle-down" aria-hidden="true" class="w-4 h-4"></font-awesome-icon>
     </div>
-    <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+    <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-50 w-52 p-2 shadow">
       <li>
         <a @click="copyToClipboard">
           <font-awesome-icon icon="copy" class="w-4 h-4"></font-awesome-icon>

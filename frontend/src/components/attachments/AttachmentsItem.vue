@@ -29,7 +29,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <h2 class="text-2xl font-bold middle">Attachments</h2>
   <div role="tablist" class="tabs tabs-border justify-center">
     <a
       role="tab"

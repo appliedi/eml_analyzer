@@ -5,7 +5,6 @@ import { useAsyncTask } from 'vue-concurrency'
 import { API } from '@/api'
 import Divider from '@/components/DividerItem.vue'
 import ErrorMessage from '@/components/ErrorMessage.vue'
-import Loading from '@/components/LoadingItem.vue'
 import Response from '@/components/ResponseItem.vue'
 import { useStatus } from '@/composables/useStatus'
 import type { ResponseType } from '@/schemas'
@@ -64,7 +63,12 @@ watch(file, () => {
       </ul>
     </div>
     <div
-      class="w-full flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md upload-draggable"
+      class="relative w-full flex justify-center cursor-pointer rounded-lg border-2 border-dashed border-base-300 transition-all"
+      :class="
+        dragDropFocus
+          ? 'border-primary bg-primary/10 scale-[1.01]'
+          : 'hover:border-primary hover:bg-primary/5'
+      "
       @dragover.prevent="updateDragDropFocus(true)"
       @dragleave.prevent="updateDragDropFocus(false)"
       @dragenter.prevent="updateDragDropFocus(true)"
@@ -73,52 +77,39 @@ watch(file, () => {
       <div class="text-center py-16">
         <p>
           <span class="text-4xl">
-            <font-awesome-icon icon="upload"></font-awesome-icon>
+            <font-awesome-icon icon="upload" />
           </span>
         </p>
         <p class="mt-4">Drop the EML/MSG file here or click to upload</p>
+        <p v-if="filename" class="mt-3">
+          <span class="badge badge-primary gap-2">
+            <font-awesome-icon icon="file-lines" class="w-3 h-3" />
+            {{ filename }}
+          </span>
+        </p>
       </div>
-      <input type="file" @change="onFileChange" />
+      <input
+        type="file"
+        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        @change="onFileChange"
+      />
     </div>
     <div class="text-center">
-      <p class="mb-4" v-if="filename">{{ filename }}</p>
-      <button class="btn btn-primary" @click="analyze">
-        <font-awesome-icon icon="search" class="w-4 h-4"></font-awesome-icon>
-        Analyze
+      <button class="btn btn-primary btn-lg" :disabled="analyzeTask.isRunning" @click="analyze">
+        <font-awesome-icon
+          v-if="analyzeTask.isRunning"
+          icon="spinner"
+          class="w-4 h-4 animate-spin"
+        />
+        <font-awesome-icon v-else icon="search" class="w-4 h-4" />
+        {{ analyzeTask.isRunning ? 'Analyzing...' : 'Analyze' }}
       </button>
     </div>
   </div>
   <Divider />
-  <Loading v-if="analyzeTask.isRunning" />
   <ErrorMessage :error="analyzeTask.last?.error" v-if="analyzeTask.isError" />
   <Response
     :response="analyzeTask.last.value"
     v-if="analyzeTask.last?.value && !analyzeTask.isRunning"
   />
 </template>
-
-<style scoped>
-input[type='file'] {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  outline: none;
-  cursor: pointer;
-}
-
-.upload-draggable {
-  position: relative;
-  cursor: pointer;
-  padding: 0.25em;
-  border: 1px dashed hsl(0, 0%, 71%);
-  border-radius: 6px;
-}
-
-.upload-draggable:hover {
-  border-color: #7957d5;
-  background: rgba(121, 87, 213, 0.05);
-}
-</style>

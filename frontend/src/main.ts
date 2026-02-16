@@ -4,13 +4,22 @@ import '@/style.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faAngleDown,
+  faCircleCheck,
   faCopy,
   faDownload,
+  faEnvelope,
+  faFileLines,
+  faGlobe,
   faIdBadge,
   faInfoCircle,
   faLink,
+  faNetworkWired,
+  faPaperclip,
+  faRoute,
   faSearch,
+  faShieldHalved,
   faSpinner,
+  faTriangleExclamation,
   faUpload
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -21,15 +30,23 @@ import router from '@/router'
 
 library.add(
   faAngleDown,
-  faLink,
-  faSearch,
-  faUpload,
-  faSpinner,
-  faDownload,
-  faUpload,
-  faInfoCircle,
+  faCircleCheck,
   faCopy,
-  faIdBadge
+  faDownload,
+  faEnvelope,
+  faFileLines,
+  faGlobe,
+  faIdBadge,
+  faInfoCircle,
+  faLink,
+  faNetworkWired,
+  faPaperclip,
+  faRoute,
+  faSearch,
+  faShieldHalved,
+  faSpinner,
+  faTriangleExclamation,
+  faUpload
 )
 const pinia = createPinia()
 

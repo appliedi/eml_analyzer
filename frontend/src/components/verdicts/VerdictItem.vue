@@ -35,6 +35,11 @@ const details = computed((): DetailType[] => {
   <div class="card border-1" :class="cardType">
     <div class="card-body">
       <h3 class="card-title text-base">
+        <font-awesome-icon
+          :icon="verdict.malicious ? 'triangle-exclamation' : 'circle-check'"
+          class="w-4 h-4"
+          :class="verdict.malicious ? 'text-warning' : 'text-success'"
+        />
         {{ title }}
         <div class="badge">{{ score }}</div>
       </h3>
