@@ -33,7 +33,7 @@ defineProps({
         <th class="w-80">Extracted URLs</th>
         <td>
           <div class="dropdowns">
-            <IndicatorButton :value="url" v-for="url in body.urls" :key="url" />
+            <IndicatorButton :value="url" v-for="url in body.urls" :key="url" drop-up />
           </div>
         </td>
       </tr>
@@ -41,7 +41,7 @@ defineProps({
         <th class="w-80">Extracted emails</th>
         <td>
           <div class="dropdowns">
-            <IndicatorButton :value="email" v-for="email in body.emails" :key="email" />
+            <IndicatorButton :value="email" v-for="email in body.emails" :key="email" drop-up />
           </div>
         </td>
       </tr>
@@ -49,7 +49,7 @@ defineProps({
         <th class="w-80">Extracted domains</th>
         <td>
           <div class="dropdowns">
-            <IndicatorButton :value="domain" v-for="domain in body.domains" :key="domain" />
+            <IndicatorButton :value="domain" v-for="domain in body.domains" :key="domain" drop-up />
           </div>
         </td>
       </tr>
@@ -57,7 +57,7 @@ defineProps({
         <th class="w-80">Extracted IPv4s</th>
         <td>
           <div class="dropdowns">
-            <IndicatorButton :value="ip" v-for="ip in body.ipAddresses" :key="ip" />
+            <IndicatorButton :value="ip" v-for="ip in body.ipAddresses" :key="ip" drop-up />
           </div>
         </td>
       </tr>

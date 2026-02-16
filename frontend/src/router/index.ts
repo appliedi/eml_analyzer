@@ -3,6 +3,7 @@ import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-rou
 import Cache from '@/views/CacheView.vue'
 import Home from '@/views/HomeView.vue'
 import Lookup from '@/views/LookupView.vue'
+import Report from '@/views/ReportView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -14,6 +15,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/lookup/:id',
     name: 'Lookup',
     component: Lookup,
+    props: true
+  },
+  {
+    path: '/report/:id',
+    name: 'Report',
+    component: Report,
     props: true
   },
   {

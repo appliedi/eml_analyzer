@@ -1,4 +1,5 @@
 import contextlib
+import ipaddress
 from functools import partial
 
 import aiometer
@@ -8,6 +9,18 @@ from backend import clients, schemas, settings, types
 from .abstract import AbstractAsyncFactory
 
 FRAUD_SCORE_THRESHOLD = 75
+
+
+def filter_global_ips(ips: types.ListSet[str]) -> set[str]:
+    """Filter out private, reserved, loopback, and link-local IPs."""
+    result: set[str] = set()
+    for ip in ips:
+        try:
+            if ipaddress.ip_address(ip).is_global:
+                result.add(ip)
+        except ValueError:
+            pass
+    return result
 
 
 async def lookup_ip(
@@ -25,8 +38,11 @@ async def bulk_lookup_ip(
     max_per_second: float | None = settings.ASYNC_MAX_PER_SECOND,
     max_at_once: int | None = settings.ASYNC_MAX_AT_ONCE,
 ) -> list[tuple[str, schemas.IPQSIPLookup]]:
-    tasks = [partial(lookup_ip, ip, client=client) for ip in set(ips)]
-    ip_list = list(set(ips))
+    global_ips = filter_global_ips(ips)
+    if not global_ips:
+        return []
+    tasks = [partial(lookup_ip, ip, client=client) for ip in global_ips]
+    ip_list = list(global_ips)
     results = await aiometer.run_all(
         tasks, max_at_once=max_at_once, max_per_second=max_per_second
     )

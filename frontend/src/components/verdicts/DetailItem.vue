@@ -26,7 +26,7 @@ const score = computed(() => {
 <template>
   <li class="list-row">
     <div v-html="html"></div>
-    <div>
+    <div v-if="detail.score != null">
       <span class="badge">{{ score }}</span>
     </div>
     <div v-if="detail.referenceLink">

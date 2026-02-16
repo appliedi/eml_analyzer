@@ -11,6 +11,10 @@ const props = defineProps({
   value: {
     type: String,
     required: true
+  },
+  dropUp: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -29,7 +33,7 @@ const copyToClipboard = () => {
 </script>
 
 <template>
-  <div class="dropdown dropdown-end dropdown-hover">
+  <div class="dropdown dropdown-end dropdown-hover" :class="{ 'dropdown-top': dropUp }">
     <div tabindex="0" role="button" class="btn">
       <span>{{ truncate(value, 64) }}</span>
       <font-awesome-icon icon="angle-down" aria-hidden="true" class="w-4 h-4"></font-awesome-icon>

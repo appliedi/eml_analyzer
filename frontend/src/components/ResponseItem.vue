@@ -56,10 +56,20 @@ const sections = computed(() => {
 
 <template>
   <div class="grid gap-4">
-    <div v-if="status.cache" class="text-sm text-base-content/60">
-      Cache ID:
-      <router-link class="link link-info" :to="{ name: 'Lookup', params: { id: response.id } }">
-        {{ response.id }}
+    <div v-if="status.cache" class="flex items-center gap-4 text-sm text-base-content/60">
+      <span>
+        Cache ID:
+        <router-link class="link link-info" :to="{ name: 'Lookup', params: { id: response.id } }">
+          {{ response.id }}
+        </router-link>
+      </span>
+      <router-link
+        :to="{ name: 'Report', params: { id: response.id } }"
+        class="btn btn-sm btn-outline gap-2"
+        target="_blank"
+      >
+        <font-awesome-icon icon="print" class="w-4 h-4" />
+        Print Report
       </router-link>
     </div>
 

@@ -41,7 +41,7 @@ const details = computed((): DetailType[] => {
           :class="verdict.malicious ? 'text-warning' : 'text-success'"
         />
         {{ title }}
-        <div class="badge">{{ score }}</div>
+        <div v-if="verdict.score != null" class="badge">{{ score }}</div>
       </h3>
       <ul class="list">
         <Detail v-for="detail in details" :detail="detail" :key="detail.key" />

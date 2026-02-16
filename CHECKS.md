@@ -54,8 +54,8 @@ Each verdict expands into a card showing its detail findings. Cards have a color
 |---|---|---|---|---|
 | [SpamAssassin](#spamassassin) | Spam scoring via rule matching | SpamAssassin service | Yes (float) | Score > 5.0 |
 | [OleID](#oleid) | Scans attachments for macros/exploits | Nothing extra | No | Any OLE indicator found |
-| [DKIM](#dkim) | Verifies DKIM signature | Nothing extra | No | Signature verification fails |
-| [Email Authentication](#email-authentication) | Checks SPF/DKIM/DMARC results | Nothing extra | No | SPF or DMARC = fail/softfail |
+| [DKIM](#dkim) | Verifies DKIM signature | Nothing extra | Yes (0 or 100) | Signature verification fails |
+| [Email Authentication](#email-authentication) | Checks SPF/DKIM/DMARC results | Nothing extra | Yes (0-100) | SPF or DMARC = fail/softfail |
 | [Homoglyph Detection](#homoglyph-detection) | Detects lookalike domains | Nothing extra | No | Punycode, mixed scripts, or confusables found |
 | [URL Unshortening](#url-unshortening) | Expands shortened URLs | Nothing extra | No | Never (informational only) |
 | [EmailRep](#emailrep) | Sender reputation lookup | `EMAIL_REP_API_KEY` | No | Sender marked suspicious |
@@ -113,7 +113,7 @@ Detail findings include the filename and SHA-256 hash. If no indicators are foun
 **Verdict name:** `DKIM`
 **Requires:** Nothing extra (performs DNS lookups for the public key)
 **Malicious when:** DKIM signature verification fails
-**Score:** None
+**Score:** 0 (valid) or 100 (invalid)
 
 The check first looks for a `DKIM-Signature` header. If none exists, the check returns no result (None) and is excluded from verdicts entirely — this is not treated as a failure. When a signature is present, the raw email bytes are verified against the sender's public key retrieved via DNS. A successful verification produces a clean verdict; a failed verification (invalid signature, missing DNS record, or key mismatch) produces a malicious verdict.
 
@@ -126,7 +126,22 @@ The check first looks for a `DKIM-Signature` header. If none exists, the check r
 **Verdict name:** `Email Authentication`
 **Requires:** Nothing extra (parses existing headers + DNS lookup)
 **Malicious when:** SPF or DMARC result is `fail` or `softfail`
-**Score:** None
+**Score:** Per-method severity (0-100), verdict score = max of all method scores
+
+Each SPF, DKIM, and DMARC result is assigned a severity score:
+
+| Result | Score | Meaning |
+|---|---|---|
+| `pass` | 0 | Fully authenticated |
+| `none` | 25 | No record configured |
+| `neutral` | 25 | Neither pass nor fail |
+| `temperror` | 25 | Temporary DNS error |
+| `permerror` | 50 | Permanent DNS error |
+| `policy` | 50 | Policy decision |
+| `softfail` | 75 | Domain discourages but doesn't reject |
+| `fail` | 100 | Domain explicitly rejects |
+
+The verdict-level score is the maximum of all individual method scores (worst result wins). The DMARC policy detail does not carry a score.
 
 This check parses `Authentication-Results` headers to extract SPF, DKIM, and DMARC results. It recognizes the following result values: `pass`, `fail`, `softfail`, `neutral`, `none`, `temperror`, `permerror`, `policy`. Only SPF and DMARC failures trigger a malicious verdict — a DKIM failure in the Authentication-Results header alone does not (use the dedicated DKIM check for signature verification).
 
@@ -218,7 +233,7 @@ All URLs extracted from the email body are looked up against urlscan.io. Each UR
 **Malicious when:** Fraud score > 75
 **Score:** The fraud score for each flagged IP
 
-All IP addresses extracted from the email are checked against the IPQS API. IPs with a fraud score above 75 are flagged, and the detail findings list specific risk indicators:
+Private, reserved, loopback, and link-local IP addresses (e.g., 10.x.x.x, 172.16.x.x, 192.168.x.x, 127.0.0.1, 169.254.x.x, ::1) are automatically filtered out before querying the API. All remaining global IP addresses are checked against the IPQS API. IPs with a fraud score above 75 are flagged, and the detail findings list specific risk indicators:
 
 - **proxy** — IP is a known proxy
 - **VPN** — IP is a VPN endpoint

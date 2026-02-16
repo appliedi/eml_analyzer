@@ -1,0 +1,86 @@
+@media print {
+  /* Hide navbar */
+  nav.navbar {
+    display: none !important;
+  }
+
+  /* Force light background */
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt;
+  }
+
+  /* Page setup */
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+
+  /* Section page breaks */
+  .report-section {
+    break-before: page;
+  }
+  .report-section:first-of-type {
+    break-before: auto;
+  }
+
+  /* Keep cards/rows together */
+  .report-verdict-card,
+  .report-attachment-card {
+    break-inside: avoid;
+  }
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+  tr {
+    break-inside: avoid;
+  }
+
+  /* Preserve verdict colors */
+  .text-success,
+  .text-error,
+  .text-warning,
+  .border-success,
+  .border-error,
+  .border-warning {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Table borders for paper */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th,
+  td {
+    border: 1px solid #d1d5db;
+    padding: 4pt 8pt;
+    font-size: 10pt;
+  }
+  th {
+    background: #f3f4f6 !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Pre blocks flow across pages */
+  pre {
+    white-space: pre-wrap;
+    word-break: break-all;
+    border: 1px solid #d1d5db;
+    padding: 8pt;
+    font-size: 9pt;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Remove shadows */
+  .shadow,
+  .shadow-md,
+  .shadow-lg {
+    box-shadow: none !important;
+  }
+}

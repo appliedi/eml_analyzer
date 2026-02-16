@@ -37,7 +37,10 @@ export class IPQualityScoreForURL extends IPQualityScore {
   }
 
   public href(value: string): string {
-    return buildURL(this.baseURL, `/threat-intelligence/malicious-url-scanner/lookup/${encodeURIComponent(value)}`)
+    return buildURL(
+      this.baseURL,
+      `/threat-intelligence/malicious-url-scanner/lookup/${encodeURIComponent(value)}`
+    )
   }
 }
 
@@ -48,10 +51,7 @@ export class IPQualityScoreForDomain extends IPQualityScore {
   }
 
   public href(value: string): string {
-    return buildURL(
-      this.baseURL,
-      `/threat-intelligence/malicious-url-scanner/lookup/${value}`
-    )
+    return buildURL(this.baseURL, `/threat-intelligence/malicious-url-scanner/lookup/${value}`)
   }
 }
 

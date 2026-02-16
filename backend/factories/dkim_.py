@@ -11,6 +11,7 @@ def transform(is_valid: bool, *, name: str) -> schemas.Verdict:
         details = [
             schemas.VerdictDetail(
                 key="dkim_signature",
+                score=0,
                 description="DKIM signature verified successfully",
             )
         ]
@@ -18,6 +19,7 @@ def transform(is_valid: bool, *, name: str) -> schemas.Verdict:
         details = [
             schemas.VerdictDetail(
                 key="dkim_signature",
+                score=100,
                 description="DKIM signature verification failed or no valid signature found",
             )
         ]
@@ -25,6 +27,7 @@ def transform(is_valid: bool, *, name: str) -> schemas.Verdict:
     return schemas.Verdict(
         name=name,
         malicious=not is_valid,
+        score=0 if is_valid else 100,
         details=details,
     )
 
