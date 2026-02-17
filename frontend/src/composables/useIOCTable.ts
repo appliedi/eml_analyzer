@@ -9,6 +9,7 @@ export type CellState = 'flagged' | 'clean' | 'errored' | 'na'
 export interface IOCServiceResult {
   state: CellState
   detail?: DetailType
+  errorMessage?: string
 }
 
 export interface IOCRow {
@@ -73,11 +74,17 @@ export function useIOCTable(response: Ref<ResponseType>, status: Ref<StatusType>
 
     if (iocMap.size === 0) return []
 
-    // 2. Track which verdicts actually returned, and build detail index
+    // 2. Track which verdicts actually returned, error verdicts, and build detail index
     const returnedVerdicts = new Set(response.value.verdicts.map((v) => v.name))
+    const errorVerdicts = new Map<string, string>()
     const detailIndex = new Map<string, Map<string, DetailType>>()
     for (const verdict of response.value.verdicts) {
       if (!activeColumns.some((c) => c.name === verdict.name)) continue
+
+      if (verdict.error) {
+        errorVerdicts.set(verdict.name, verdict.error)
+        continue
+      }
 
       const keyMap = new Map<string, DetailType>()
       for (const detail of verdict.details) {
@@ -104,6 +111,12 @@ export function useIOCTable(response: Ref<ResponseType>, status: Ref<StatusType>
         if (!returnedVerdicts.has(svc.name)) {
           // Service was expected to run but verdict is missing (error/quota)
           services.set(svc.name, { state: 'errored' })
+          continue
+        }
+
+        const errorMsg = errorVerdicts.get(svc.name)
+        if (errorMsg) {
+          services.set(svc.name, { state: 'errored', errorMessage: errorMsg })
           continue
         }
 

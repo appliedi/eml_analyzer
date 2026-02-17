@@ -15,7 +15,7 @@ defineProps<{
       class="w-4 h-4 text-base-content/30"
     />
     <!-- Errored: service was expected to run but returned no verdict -->
-    <span v-else-if="serviceResult.state === 'errored'" class="tooltip" data-tip="Service unavailable (error or quota)">
+    <span v-else-if="serviceResult.state === 'errored'" class="tooltip" :data-tip="serviceResult.errorMessage || 'Service unavailable (error or quota)'">
       <font-awesome-icon icon="minus" class="w-4 h-4 text-warning" />
     </span>
     <!-- Flagged: service found this IOC in its details -->

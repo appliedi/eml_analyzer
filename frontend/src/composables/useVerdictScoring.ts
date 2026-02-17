@@ -41,7 +41,7 @@ const riskIcons: Record<RiskLevel, string> = {
 }
 
 function isScoring(v: VerdictType): boolean {
-  return v.name !== 'URL Unshortening'
+  return v.name !== 'URL Unshortening' && !v.error
 }
 
 export function useVerdictScoring(verdicts: Ref<VerdictType[]>) {
@@ -83,6 +83,15 @@ export function useVerdictScoring(verdicts: Ref<VerdictType[]>) {
 }
 
 export function verdictStyle(v: VerdictType) {
+  if (v.error) {
+    return {
+      color: 'text-base-content/50',
+      border: 'border-base-300',
+      bg: 'bg-base-200/50',
+      badge: 'badge-ghost',
+      icon: 'circle-exclamation'
+    }
+  }
   return v.malicious
     ? {
         color: 'text-error',

@@ -30,7 +30,14 @@ async def bulk_lookup(
     return [result for result in results if result]
 
 
-def transform(lookups: list[schemas.UrlScanLookup], *, name: str):
+def transform(lookups: list[schemas.UrlScanLookup], *, name: str, requested_count: int = 0):
+    if requested_count > 0 and len(lookups) == 0:
+        return schemas.Verdict(
+            name=name,
+            malicious=False,
+            error="All urlscan.io lookups failed (possible quota/rate limit).",
+        )
+
     results = itertools.chain.from_iterable([lookup.results for lookup in lookups])
     malicious_results = [result for result in results if result.verdicts.malicious]
 
@@ -79,4 +86,4 @@ class UrlScanVerdictFactory(AbstractAsyncFactory):
             max_at_once=max_at_once,
             max_per_second=max_per_second,
         )
-        return transform(got, name=self.name)
+        return transform(got, name=self.name, requested_count=len(set(urls)))

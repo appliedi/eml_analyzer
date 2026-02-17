@@ -15,3 +15,4 @@ class Verdict(APIModel):
     malicious: bool
     score: float | int | None = Field(default=None)
     details: list[VerdictDetail] = Field(default_factory=list)
+    error: str | None = Field(default=None)

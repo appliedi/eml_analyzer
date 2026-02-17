@@ -61,8 +61,9 @@ async def get_email_rep_verdicts(
         return await EmailRepVerdictFactory(client).call(from_)
     except Exception as e:
         log_exception(e)
-
-    return None
+        return schemas.Verdict(
+            name="EmailRep", malicious=False, error=f"EmailRep lookup failed: {e}"
+        )
 
 
 async def get_urlscan_verdict(
@@ -72,8 +73,9 @@ async def get_urlscan_verdict(
         return await UrlScanVerdictFactory(client).call(urls)
     except Exception as e:
         log_exception(e)
-
-    return None
+        return schemas.Verdict(
+            name="urlscan.io", malicious=False, error=f"urlscan.io lookup failed: {e}"
+        )
 
 
 async def get_vt_verdict(
@@ -83,8 +85,9 @@ async def get_vt_verdict(
         return await VirusTotalVerdictFactory(client).call(sha256s)
     except Exception as e:
         log_exception(e)
-
-    return None
+        return schemas.Verdict(
+            name="VirusTotal", malicious=False, error=f"VirusTotal lookup failed: {e}"
+        )
 
 
 async def get_dkim_verdict(eml_file: bytes, eml: schemas.Eml) -> schemas.Verdict | None:
@@ -134,8 +137,9 @@ async def get_ipqs_ip_verdict(
         return await IPQSIPVerdictFactory(client).call(ips)
     except Exception as e:
         log_exception(e)
-
-    return None
+        return schemas.Verdict(
+            name="IPQS IP", malicious=False, error=f"IPQS IP lookup failed: {e}"
+        )
 
 
 async def get_ipqs_url_verdict(
@@ -145,8 +149,9 @@ async def get_ipqs_url_verdict(
         return await IPQSURLVerdictFactory(client).call(urls)
     except Exception as e:
         log_exception(e)
-
-    return None
+        return schemas.Verdict(
+            name="IPQS URL", malicious=False, error=f"IPQS URL lookup failed: {e}"
+        )
 
 
 async def get_ipqs_email_verdict(
@@ -156,8 +161,9 @@ async def get_ipqs_email_verdict(
         return await IPQSEmailVerdictFactory(client).call(email)
     except Exception as e:
         log_exception(e)
-
-    return None
+        return schemas.Verdict(
+            name="IPQS Email", malicious=False, error=f"IPQS Email lookup failed: {e}"
+        )
 
 
 async def set_verdicts(

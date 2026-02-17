@@ -36,7 +36,16 @@ async def bulk_get_file_objects(
     return [result for result in results if result]
 
 
-def transform(objects: list[vt.Object], *, name: str = NAME) -> schemas.Verdict:
+def transform(
+    objects: list[vt.Object], *, name: str = NAME, requested_count: int = 0
+) -> schemas.Verdict:
+    if requested_count > 0 and len(objects) == 0:
+        return schemas.Verdict(
+            name=name,
+            malicious=False,
+            error="All VirusTotal lookups failed (possible quota/rate limit).",
+        )
+
     details: list[schemas.VerdictDetail] = []
 
     for obj in objects:
@@ -87,4 +96,4 @@ class VirusTotalVerdictFactory(AbstractAsyncFactory):
             max_at_once=max_at_once,
             max_per_second=max_per_second,
         )
-        return transform(got, name=self.name)
+        return transform(got, name=self.name, requested_count=len(set(sha256s)))

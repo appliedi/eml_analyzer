@@ -114,7 +114,8 @@ export const VerdictSchema = z.object({
   name: z.string(),
   malicious: z.boolean(),
   score: z.number().nullish(),
-  details: z.array(DetailSchema)
+  details: z.array(DetailSchema),
+  error: z.string().nullish()
 })
 
 export type VerdictType = z.infer<typeof VerdictSchema>

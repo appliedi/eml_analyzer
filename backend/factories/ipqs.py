@@ -52,8 +52,18 @@ async def bulk_lookup_ip(
 
 
 def transform_ip(
-    lookups: list[tuple[str, schemas.IPQSIPLookup]], *, name: str
+    lookups: list[tuple[str, schemas.IPQSIPLookup]],
+    *,
+    name: str,
+    requested_count: int = 0,
 ) -> schemas.Verdict:
+    if requested_count > 0 and len(lookups) == 0:
+        return schemas.Verdict(
+            name=name,
+            malicious=False,
+            error="All IPQS IP lookups failed (possible quota/rate limit).",
+        )
+
     details: list[schemas.VerdictDetail] = []
     malicious = False
 
@@ -122,8 +132,18 @@ async def bulk_lookup_url(
 
 
 def transform_url(
-    lookups: list[tuple[str, schemas.IPQSURLLookup]], *, name: str
+    lookups: list[tuple[str, schemas.IPQSURLLookup]],
+    *,
+    name: str,
+    requested_count: int = 0,
 ) -> schemas.Verdict:
+    if requested_count > 0 and len(lookups) == 0:
+        return schemas.Verdict(
+            name=name,
+            malicious=False,
+            error="All IPQS URL lookups failed (possible quota/rate limit).",
+        )
+
     details: list[schemas.VerdictDetail] = []
     malicious = False
 
@@ -214,8 +234,9 @@ class IPQSIPVerdictFactory(AbstractAsyncFactory):
         self.name = name
 
     async def call(self, ips: types.ListSet[str]) -> schemas.Verdict:
+        global_ips = filter_global_ips(ips)
         lookups = await bulk_lookup_ip(ips, client=self.client)
-        return transform_ip(lookups, name=self.name)
+        return transform_ip(lookups, name=self.name, requested_count=len(global_ips))
 
 
 class IPQSURLVerdictFactory(AbstractAsyncFactory):
@@ -225,7 +246,7 @@ class IPQSURLVerdictFactory(AbstractAsyncFactory):
 
     async def call(self, urls: types.ListSet[str]) -> schemas.Verdict:
         lookups = await bulk_lookup_url(urls, client=self.client)
-        return transform_url(lookups, name=self.name)
+        return transform_url(lookups, name=self.name, requested_count=len(set(urls)))
 
 
 class IPQSEmailVerdictFactory(AbstractAsyncFactory):
