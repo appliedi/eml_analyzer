@@ -6,7 +6,8 @@ from redis import Redis
 
 from backend import clients, settings
 
-_clerk_warning_logged = False
+if not settings.CLERK_SECRET_KEY:
+    logger.warning("CLERK_SECRET_KEY is not configured — authentication is disabled")
 
 
 def get_optional_redis():
@@ -65,14 +66,7 @@ def get_spam_assassin() -> clients.SpamAssassin:
 
 
 def verify_clerk_token(request: Request) -> dict | None:
-    global _clerk_warning_logged
-
     if not settings.CLERK_SECRET_KEY:
-        if not _clerk_warning_logged:
-            logger.warning(
-                "CLERK_SECRET_KEY is not configured — authentication is disabled"
-            )
-            _clerk_warning_logged = True
         return None
 
     from clerk_backend_api.security import (
