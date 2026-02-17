@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UserButton } from '@clerk/vue'
 import { useDark, useToggle } from '@vueuse/core'
 
 import StatusTags from '@/components/StatusTags.vue'
@@ -21,7 +22,10 @@ const toggleDark = useToggle(isDark)
         <ul class="menu menu-horizontal px-1">
           <li><router-link :to="{ name: 'Home' }" class="btn btn-ghost">Home</router-link></li>
           <li><router-link :to="{ name: 'Cache' }" class="btn btn-ghost">Cache</router-link></li>
-          <li><a href="/docs" target="_blank" class="btn btn-ghost">API</a></li>
+          <li>
+            <router-link :to="{ name: 'ApiKeys' }" class="btn btn-ghost">API Keys</router-link>
+          </li>
+          <li><a href="/api/docs" target="_blank" class="btn btn-ghost">API</a></li>
           <li>
             <a href="https://github.com/ninoseki/eml_analyzer" target="_blank" class="btn btn-ghost"
               >GitHub</a
@@ -31,6 +35,7 @@ const toggleDark = useToggle(isDark)
       </div>
     </div>
     <div class="navbar-end">
+      <UserButton />
       <StatusTags />
       <input
         type="checkbox"

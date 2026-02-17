@@ -4,6 +4,16 @@ import { ResponseSchema, type ResponseType, StatusSchema, type StatusType } from
 
 const client = axios.create()
 
+export function setupAuthInterceptor(getToken: () => Promise<string | null>) {
+  client.interceptors.request.use(async (config) => {
+    const token = await getToken()
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  })
+}
+
 export const API = {
   async analyze(file: File): Promise<ResponseType> {
     const formData = new FormData()

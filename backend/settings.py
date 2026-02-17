@@ -42,6 +42,9 @@ IPQUALITYSCORE_API_KEY: Secret | None = config(
     "IPQUALITYSCORE_API_KEY", cast=Secret, default=None
 )
 
+# Clerk authentication
+CLERK_SECRET_KEY: Secret | None = config("CLERK_SECRET_KEY", cast=Secret, default=None)
+
 # Async/aiometer
 ASYNC_MAX_AT_ONCE: int | None = config("ASYNC_MAX_AT_ONCE", cast=int, default=None)
 ASYNC_MAX_PER_SECOND: float | None = config(

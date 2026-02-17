@@ -1,6 +1,7 @@
 import 'font-awesome-animation/css/font-awesome-animation.min.css'
 import '@/style.css'
 
+import { clerkPlugin } from '@clerk/vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faAngleDown,
@@ -66,6 +67,9 @@ import { initializeStores } from '@/store'
 const app = createApp(App)
 
 app.component('font-awesome-icon', FontAwesomeIcon)
+app.use(clerkPlugin, {
+  publishableKey: import.meta.env.VITE_CLERK_PUBLISHABLE_KEY as string
+})
 app.use(router)
 app.use(pinia)
 

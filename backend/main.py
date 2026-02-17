@@ -16,13 +16,33 @@ def create_app():
     app = FastAPI(
         debug=settings.DEBUG,
         title=settings.PROJECT_NAME,
+        docs_url="/api/docs",
+        redoc_url="/api/redoc",
+        openapi_url="/api/openapi.json",
     )
     # add middleware
     app.add_middleware(GZipMiddleware, minimum_size=1000)
 
     app.add_middleware(
         ContentSecurityPolicy,
-        Option={"img-src": ["'self'", "data:", "t0.gstatic.com", "www.google.com"]},
+        Option={
+            "img-src": [
+                "'self'",
+                "data:",
+                "t0.gstatic.com",
+                "www.google.com",
+                "https://img.clerk.com",
+                "https://*.clerk.com",
+            ],
+            "connect-src": [
+                "'self'",
+                "https://*.clerk.accounts.dev",
+                "https://*.clerk.com",
+            ],
+            "worker-src": ["'self'", "blob:"],
+            "script-src": ["'self'", "https://*.clerk.accounts.dev"],
+            "frame-src": ["'self'", "https://*.clerk.accounts.dev"],
+        },
         script_nonce=False,
         style_nonce=False,
         report_only=False,

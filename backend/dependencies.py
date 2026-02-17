@@ -1,9 +1,12 @@
 import typing
 
-from fastapi import Depends
+from fastapi import Depends, HTTPException, Request
+from loguru import logger
 from redis import Redis
 
 from backend import clients, settings
+
+_clerk_warning_logged = False
 
 
 def get_optional_redis():
@@ -60,6 +63,33 @@ def get_spam_assassin() -> clients.SpamAssassin:
         timeout=settings.SPAMASSASSIN_TIMEOUT,
     )
 
+
+def verify_clerk_token(request: Request) -> dict | None:
+    global _clerk_warning_logged
+
+    if not settings.CLERK_SECRET_KEY:
+        if not _clerk_warning_logged:
+            logger.warning(
+                "CLERK_SECRET_KEY is not configured — authentication is disabled"
+            )
+            _clerk_warning_logged = True
+        return None
+
+    from clerk_backend_api.security import (
+        AuthenticateRequestOptions,
+        authenticate_request,
+    )
+
+    options = AuthenticateRequestOptions(
+        secret_key=str(settings.CLERK_SECRET_KEY),
+    )
+    state = authenticate_request(request, options)
+    if not state.is_authenticated:
+        raise HTTPException(status_code=401, detail=state.message or "Unauthorized")
+    return state.payload
+
+
+ClerkAuth = typing.Annotated[dict | None, Depends(verify_clerk_token)]
 
 OptionalRedis = typing.Annotated[Redis | None, Depends(get_optional_redis)]
 OptionalVirusTotal = typing.Annotated[

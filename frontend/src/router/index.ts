@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router'
 
+import ApiKeys from '@/views/ApiKeysView.vue'
 import Cache from '@/views/CacheView.vue'
 import Home from '@/views/HomeView.vue'
 import Lookup from '@/views/LookupView.vue'
@@ -27,6 +28,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/cache',
     name: 'Cache',
     component: Cache
+  },
+  {
+    path: '/api-keys',
+    name: 'ApiKeys',
+    component: ApiKeys
   }
 ]
 

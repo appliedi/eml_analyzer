@@ -1,6 +1,9 @@
 # frontend
 FROM node:24-alpine AS frontend
 
+ARG VITE_CLERK_PUBLISHABLE_KEY
+ENV VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
+
 WORKDIR /usr/src/app
 
 COPY ./frontend ./frontend
