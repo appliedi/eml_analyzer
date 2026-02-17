@@ -30,7 +30,9 @@ async def bulk_lookup(
     return [result for result in results if result]
 
 
-def transform(lookups: list[schemas.UrlScanLookup], *, name: str, requested_count: int = 0):
+def transform(
+    lookups: list[schemas.UrlScanLookup], *, name: str, requested_count: int = 0
+):
     if requested_count > 0 and len(lookups) == 0:
         return schemas.Verdict(
             name=name,

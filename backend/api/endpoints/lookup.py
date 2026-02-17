@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Path, status
 
 from backend import dependencies, schemas, settings
 
@@ -7,12 +7,18 @@ router = APIRouter()
 
 @router.get(
     "/{id}",
-    response_description="Return an analysis result",
+    response_description="The cached analysis result including headers, bodies, attachments, IOCs, and verdicts",
     summary="Lookup cached analysis",
-    description="Try to fetch existing analysis from database",
+    description="Retrieve a previously cached analysis result by its unique ID. Returns the full analysis response if found in Redis. Requires Redis to be configured and the analysis to still be within the cache TTL.",
+    responses={
+        404: {"description": "No cached analysis found for the given ID"},
+        501: {"description": "Redis cache is not configured or unavailable"},
+    },
 )
 async def lookup(
-    id: str, *, optional_redis: dependencies.OptionalRedis
+    id: str = Path(description="Unique analysis result ID"),
+    *,
+    optional_redis: dependencies.OptionalRedis,
 ) -> schemas.Response:
     if optional_redis is None:
         raise HTTPException(

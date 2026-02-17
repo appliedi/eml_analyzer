@@ -10,10 +10,13 @@ router = APIRouter()
 
 @router.post(
     "/virustotal",
-    response_description="Return a submission result",
+    response_description="Submission result with a link to the VirusTotal detection page",
     summary="Submit an attachment to VirusTotal",
-    description="Submit an attachment to VirusTotal",
+    description="Submit an email attachment to VirusTotal for malware scanning. Returns a reference URL to the VirusTotal detection results page for the submitted file. Requires a valid VirusTotal API key to be configured.",
     status_code=200,
+    responses={
+        403: {"description": "VirusTotal API key is not configured"},
+    },
 )
 async def submit_to_virustotal(
     attachment: Attachment, *, optional_vt: dependencies.OptionalVirusTotal

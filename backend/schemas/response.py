@@ -9,9 +9,14 @@ from .verdict import Verdict
 
 
 class Response(APIModel):
-    eml: Eml
-    verdicts: list[Verdict] = Field(default_factory=list)
-    id: str
+    eml: Eml = Field(
+        description="Parsed email content including headers, bodies, and attachments"
+    )
+    verdicts: list[Verdict] = Field(
+        default_factory=list,
+        description="Threat intelligence verdicts from configured services",
+    )
+    id: str = Field(description="Unique identifier for this analysis result")
 
     @cached_property
     def urls(self) -> set[str]:

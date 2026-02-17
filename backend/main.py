@@ -16,9 +16,27 @@ def create_app():
     app = FastAPI(
         debug=settings.DEBUG,
         title=settings.PROJECT_NAME,
+        description="REST API for analyzing EML and MSG email files. Extracts headers, body content, IOCs (URLs, domains, IPs, emails), attachments, and DKIM signatures. Integrates with VirusTotal, urlscan.io, EmailRep, IPQualityScore, and SpamAssassin for threat intelligence.",
+        version="1.0.0",
         docs_url="/api/docs",
         redoc_url="/api/redoc",
         openapi_url="/api/openapi.json",
+        openapi_tags=[
+            {
+                "name": "analyze",
+                "description": "Upload and analyze EML/MSG email files",
+            },
+            {
+                "name": "submit",
+                "description": "Submit IOCs to external threat intelligence services",
+            },
+            {"name": "lookup", "description": "Retrieve cached analysis results by ID"},
+            {"name": "cache", "description": "Browse cached analysis keys"},
+            {
+                "name": "status",
+                "description": "Check connectivity status of integrations",
+            },
+        ],
     )
     # add middleware
     app.add_middleware(GZipMiddleware, minimum_size=1000)

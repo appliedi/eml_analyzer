@@ -5,7 +5,12 @@ from backend import dependencies, schemas
 router = APIRouter()
 
 
-@router.get("/")
+@router.get(
+    "/",
+    response_description="Connectivity status for each integration",
+    summary="Check integration status",
+    description="Returns the connectivity status of all external integrations: Redis cache, VirusTotal, EmailRep, urlscan.io, and IPQualityScore. Each field indicates whether the corresponding API key or service is configured and available.",
+)
 async def get_status(
     optional_redis: dependencies.OptionalRedis,
     optional_email_rep: dependencies.OptionalEmailRep,

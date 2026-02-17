@@ -48,9 +48,12 @@ def cache_response(
 
 @router.post(
     "/",
-    response_description="Return an analysis result",
-    summary="Analyze an eml",
-    description="Analyze an eml and return an analysis result",
+    response_description="Full analysis result including headers, bodies, attachments, IOCs, and verdicts",
+    summary="Analyze an email (base64)",
+    description="Submit a base64-encoded EML or MSG file for analysis. The file is parsed to extract headers, body content, attachments, and IOCs. If configured, results are enriched with VirusTotal, urlscan.io, EmailRep, IPQualityScore, and SpamAssassin verdicts. When Redis is available, results are cached for later retrieval.",
+    responses={
+        422: {"description": "Invalid file format or payload validation error"},
+    },
 )
 async def analyze(
     payload: schemas.Payload,
@@ -82,9 +85,12 @@ async def analyze(
 
 @router.post(
     "/file",
-    response_description="Return an analysis result",
-    summary="Analyze an eml",
-    description="Analyze an eml and return an analysis result",
+    response_description="Full analysis result including headers, bodies, attachments, IOCs, and verdicts",
+    summary="Analyze an email (file upload)",
+    description="Upload a raw EML or MSG file for analysis via multipart form data. The file is parsed to extract headers, body content, attachments, and IOCs. If configured, results are enriched with VirusTotal, urlscan.io, EmailRep, IPQualityScore, and SpamAssassin verdicts. When Redis is available, results are cached for later retrieval.",
+    responses={
+        422: {"description": "Invalid file format or payload validation error"},
+    },
 )
 async def analyze_file(
     file: bytes = File(...),

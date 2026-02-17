@@ -135,7 +135,9 @@ def transform(
     scored_details = [d.score for d in details if d.score is not None]
     verdict_score = max(scored_details) if scored_details else None
 
-    return schemas.Verdict(name=name, malicious=malicious, score=verdict_score, details=details)
+    return schemas.Verdict(
+        name=name, malicious=malicious, score=verdict_score, details=details
+    )
 
 
 class EmailAuthVerdictFactory(AbstractAsyncFactory):

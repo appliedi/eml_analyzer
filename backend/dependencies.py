@@ -1,6 +1,7 @@
 import typing
 
-from fastapi import Depends, HTTPException, Request
+from fastapi import Depends, HTTPException, Request, Security
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from loguru import logger
 from redis import Redis
 
@@ -65,7 +66,13 @@ def get_spam_assassin() -> clients.SpamAssassin:
     )
 
 
-def verify_clerk_token(request: Request) -> dict | None:
+bearer_scheme = HTTPBearer(auto_error=False)
+
+
+def verify_clerk_token(
+    request: Request,
+    _credentials: HTTPAuthorizationCredentials | None = Security(bearer_scheme),  # noqa: B008
+) -> dict | None:
     if not settings.CLERK_SECRET_KEY:
         return None
 
